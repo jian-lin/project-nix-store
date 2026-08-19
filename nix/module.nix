@@ -14,6 +14,14 @@ in
       ...
     }:
     {
+      apps = {
+        emacs = {
+          type = "app";
+          meta.description = "Emacs with ${pname}";
+          program = pkgs.emacs.pkgs.withPackages (epkgs: [ epkgs.${pname} ]);
+        };
+      };
+
       packages = {
         ${pname} = pkgs.emacs.pkgs.${pname};
       };
