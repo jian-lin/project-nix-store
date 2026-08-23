@@ -7,7 +7,7 @@
 }:
 
 let
-  pname = "project-store";
+  pname = "project-nix-store";
 in
 melpaBuild {
   inherit pname;

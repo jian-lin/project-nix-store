@@ -4,7 +4,7 @@
 { inputs, self, ... }:
 
 let
-  pname = "project-store";
+  pname = "project-nix-store";
 in
 {
   perSystem =

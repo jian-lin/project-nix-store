@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2026 Lin Jian <me@linj.tech>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-#+title: project-store - Project backend for Nix store
+#+title: project-nix-store - Project backend for Nix-like store
 
 #+begin_comment
 After changing this file,
@@ -15,7 +15,7 @@ When improving rendering for one makes another worse,
 prioritize the rendering quality of items appearing earlier in the above list.
 #+end_comment
 
-This package is a =project.el= backend for Nix store.
+This package is a =project.el= backend for Nix-like store.
 Each store path,
 if it is a directory,
 is a project root.
@@ -32,16 +32,16 @@ use ~project-find-file~ to quickly visit another file under the same store path.
 
 * Usage
 
-Add ~project-store-try~ to ~project-find-functions~.
+Add ~project-nix-store-try~ to ~project-find-functions~.
 To ensure good performance,
 put it before ~project-try-vc~.
 
-It is recommended to also add ~project-store-p~ to ~project-list-exclude~.
+It is recommended to also add ~project-nix-store-p~ to ~project-list-exclude~.
 
-See customization group =project-store= for user options.
+See customization group =project-nix-store= for user options.
 
 To disable this package,
-remove ~project-store-try~ from ~project-find-functions~
+remove ~project-nix-store-try~ from ~project-find-functions~
 or call ~unload-feature~.
 
 * Performance
