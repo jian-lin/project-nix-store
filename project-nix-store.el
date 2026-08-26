@@ -6,7 +6,7 @@
 ;; Author: Lin Jian <me@linj.tech>
 ;; URL: https://github.com/jian-lin/project-nix-store
 ;; Keywords: nix nix-store project tools
-;; Version: 0.9.0
+;; Version: 0.10.0
 ;; Package-Requires: ((emacs "29.1"))
 
 ;;; Commentary:
