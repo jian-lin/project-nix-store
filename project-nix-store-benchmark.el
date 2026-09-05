@@ -48,7 +48,7 @@ In addition, we manually do GC once before evaluating BODY."
 ;; variable lookup time in benchmark results.
 
 (defun project-nix-store-benchmark--project-nix-store-try ()
-  (let ((project-nix-store-dir "/nix/store/")
+  (let ((project-nix-store-dirs '("/nix/store/"))
         (project-nix-store--cached-projects (make-hash-table :test 'equal)))
     (project-nix-store-benchmark-with-interactive-gc
       (benchmark-run-compiled 10000000
@@ -56,7 +56,7 @@ In addition, we manually do GC once before evaluating BODY."
          "/nix/store/jnhsnfz13w8ailk2lfs2pvamwa35mxzs-emacs-packages-deps/share/emacs/site-lisp/elpa/org-9.8.1/")))))
 
 (defun project-nix-store-benchmark--project-nix-store--try-without-cache ()
-  (let ((project-nix-store-dir "/nix/store/"))
+  (let ((project-nix-store-dirs '("/nix/store/")))
     (project-nix-store-benchmark-with-interactive-gc
       (benchmark-run-compiled 10000
         (project-nix-store--try-without-cache
@@ -66,16 +66,16 @@ In addition, we manually do GC once before evaluating BODY."
   (project-nix-store-benchmark-with-interactive-gc
     (benchmark-run-compiled 1000000
       (project-root
-       '(nix-store . "/nix/store/jnhsnfz13w8ailk2lfs2pvamwa35mxzs-emacs-packages-deps/")))))
+       '(nix-store "/nix/store/jnhsnfz13w8ailk2lfs2pvamwa35mxzs-emacs-packages-deps/" 11)))))
 
 (defun project-nix-store-benchmark--project-name ()
-  (let ((project-nix-store-dir "/nix/store/")
+  (let ((project-nix-store-dirs '("/nix/store/"))
         (project-nix-store-name-prefix "/NS/")
         (project-nix-store--cached-project-names (make-hash-table :test 'equal)))
     (project-nix-store-benchmark-with-interactive-gc
       (benchmark-run-compiled 1000000
         (project-name
-         '(nix-store . "/nix/store/jnhsnfz13w8ailk2lfs2pvamwa35mxzs-emacs-packages-deps/"))))))
+         '(nix-store "/nix/store/jnhsnfz13w8ailk2lfs2pvamwa35mxzs-emacs-packages-deps/" 11))))))
 
 ;;;###autoload
 (defun project-nix-store-benchmark-run (&optional output-file)

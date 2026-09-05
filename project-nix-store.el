@@ -32,22 +32,22 @@
 (defvar project-nix-store--cached-project-names (make-hash-table :test 'equal)
   "Cache for `project-name'.")
 
-(defun project-nix-store--set-dir (symbol value)
-  "Set `project-nix-store-dir' after invalidating cache.
+(defun project-nix-store--set-dirs (symbol value)
+  "Set `project-nix-store-dirs' after invalidating cache.
 SYMBOL and VALUE are passed to `set-default-toplevel-value'.
 VALUE is preprocessed by `file-name-as-directory'."
   (clrhash project-nix-store--cached-projects)
   (clrhash project-nix-store--cached-project-names)
-  (set-default-toplevel-value symbol (file-name-as-directory value)))
+  (set-default-toplevel-value symbol (mapcar #'file-name-as-directory value)))
 
-(defcustom project-nix-store-dir "/nix/store/"
-  "Store directory.
+(defcustom project-nix-store-dirs '("/nix/store/")
+  "A list of store directories.
 
 See URL `https://nix.dev/manual/nix/2.35/store/store-path.html#store-directory-path'."
-  :type 'directory
+  :type '(repeat directory)
   ;; TODO set :initialize when Emacs bug#81396 is fixed
   ;; :initialize #'custom-initialize-changed
-  :set #'project-nix-store--set-dir
+  :set #'project-nix-store--set-dirs
   :link '(url-link
           :tag "store directory definition"
           "https://nix.dev/manual/nix/2.35/store/store-path.html#store-directory-path"))
@@ -71,19 +71,23 @@ See `project-root' for store path definition."
 (defun project-nix-store--try-without-cache (dir)
   "Like `project-nix-store-try', but do not use cache.
 See `project-nix-store-try' for DIR and return value."
-  (when (and (string-prefix-p project-nix-store-dir dir)
-             (not (string= dir project-nix-store-dir)))
-    (cl-loop for project-root = dir then project-root-parent
-             for project-root-parent = (file-name-parent-directory project-root)
-             until (string= project-root-parent project-nix-store-dir)
-             finally return (cons 'nix-store project-root))))
+  (cl-loop for project-nix-store-dir in project-nix-store-dirs
+           thereis
+           (when (and (string-prefix-p project-nix-store-dir dir)
+                      (not (string= dir project-nix-store-dir)))
+             (cl-loop for project-root = dir then project-root-parent
+                      for project-root-parent = (file-name-parent-directory project-root)
+                      until (string= project-root-parent project-nix-store-dir)
+                      finally return (list 'nix-store
+                                           project-root
+                                           (length project-nix-store-dir))))))
 
 (cl-defmethod project-root ((project (head nix-store)))
   "Return PROJECT store path.
 
 See URL `https://nix.dev/manual/nix/2.35/store/store-path.html#store-path'
 for store path definition."
-  (cdr project))
+  (nth 1 project))
 
 (defun project-nix-store--set-name-prefix (symbol value)
   "Set `project-nix-store-name-prefix' after invalidating cache.
@@ -107,9 +111,8 @@ See `project-root' for store path definition."
         (gethash project-root project-nix-store--cached-project-names)
       (concat project-nix-store-name-prefix
               (substring (directory-file-name project-root)
-                         (+ (length project-nix-store-dir)
-                            ;; length of digest and a hyphen
-                            33))))))
+                         (+ (nth 2 project) ; length of store dir
+                            33))))))        ; length of digest and a hyphen
 
 ;; `project-nix-store-p' is called by `project-remember-project' via `project-list-exclude'.
 ;; It is possible to call `project-nix-store-p' before the autoloaded `project-nix-store-try'.

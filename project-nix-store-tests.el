@@ -13,26 +13,30 @@
 (eval-when-compile (require 'cl-lib))
 
 (ert-deftest project-nix-store-try ()
-  (let ((project-nix-store-dir "/nix/store/")
+  (let ((project-nix-store-dirs '("/nix/store/" "/another/store/"))
         (project-to-dirs
          '(nil
            ("/" "/nix" "/nix/store/"
             "/home/" "/home/me/" "/home/me/project/" "/home/me/project/nixpkgs/"
             "/root/" "/var/" "/var/lib/" "/tmp/")
-           (nix-store . "/nix/store/jnhsnfz13w8ailk2lfs2pvamwa35mxzs-emacs-packages-deps/")
+           (nix-store "/nix/store/jnhsnfz13w8ailk2lfs2pvamwa35mxzs-emacs-packages-deps/" 11)
            ("/nix/store/jnhsnfz13w8ailk2lfs2pvamwa35mxzs-emacs-packages-deps/"
             "/nix/store/jnhsnfz13w8ailk2lfs2pvamwa35mxzs-emacs-packages-deps/share/"
             "/nix/store/jnhsnfz13w8ailk2lfs2pvamwa35mxzs-emacs-packages-deps/share/emacs/"
             "/nix/store/jnhsnfz13w8ailk2lfs2pvamwa35mxzs-emacs-packages-deps/share/emacs/site-lisp/"
             "/nix/store/jnhsnfz13w8ailk2lfs2pvamwa35mxzs-emacs-packages-deps/share/emacs/site-lisp/elpa/"
             "/nix/store/jnhsnfz13w8ailk2lfs2pvamwa35mxzs-emacs-packages-deps/share/emacs/site-lisp/elpa/project-0.11.2/")
-           (nix-store . "/nix/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/")
+           (nix-store "/nix/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/" 11)
            ("/nix/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/"
             "/nix/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/share/"
             "/nix/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/share/emacs/"
             "/nix/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/share/emacs/30.2/"
             "/nix/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/share/emacs/30.2/lisp/"
-            "/nix/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/share/emacs/30.2/lisp/progmodes/"))))
+            "/nix/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/share/emacs/30.2/lisp/progmodes/")
+           (nix-store "/another/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/" 15)
+           ("/another/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/"
+            "/another/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/share/"
+            "/another/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/share/emacs/"))))
     (cl-loop
      for (project dirs) on project-to-dirs by #'cddr
      do (ert-info ((format "%S" project) :prefix "project = ")
@@ -55,10 +59,12 @@
 (ert-deftest project-nix-store-root ()
   "Test `project-root' called with a project-nix-store instance."
   (let ((project-and-roots
-         '((nix-store . "/nix/store/jnhsnfz13w8ailk2lfs2pvamwa35mxzs-emacs-packages-deps/")
+         '((nix-store "/nix/store/jnhsnfz13w8ailk2lfs2pvamwa35mxzs-emacs-packages-deps/" 11)
            "/nix/store/jnhsnfz13w8ailk2lfs2pvamwa35mxzs-emacs-packages-deps/"
-           (nix-store . "/nix/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/")
-           "/nix/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/")))
+           (nix-store "/nix/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/" 11)
+           "/nix/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/"
+           (nix-store "/another/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/" 15)
+           "/another/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/")))
     (cl-loop for (project project-root) on project-and-roots by #'cddr
              do (ert-info ((format "%S" project) :prefix "project = ")
                   (should (equal (project-root project)
@@ -67,9 +73,11 @@
 (ert-deftest project-nix-store-name ()
   "Test `project-name' called with a project-nix-store instance."
   (let ((project-and-name-suffixes
-         '((nix-store . "/nix/store/jnhsnfz13w8ailk2lfs2pvamwa35mxzs-emacs-packages-deps/")
+         '((nix-store "/nix/store/jnhsnfz13w8ailk2lfs2pvamwa35mxzs-emacs-packages-deps/" 11)
            "emacs-packages-deps"
-           (nix-store . "/nix/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/")
+           (nix-store "/nix/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/" 11)
+           "emacs-30.2"
+           (nix-store "/another/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/" 15)
            "emacs-30.2")))
     (cl-loop
      for (project project-name-suffix) on project-and-name-suffixes by #'cddr
@@ -100,8 +108,9 @@
 
 (ert-deftest project-nix-store-p ()
   (cl-loop for nix-store-project in
-           '((nix-store . "/nix/store/jnhsnfz13w8ailk2lfs2pvamwa35mxzs-emacs-packages-deps/")
-             (nix-store . "/nix/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/"))
+           '((nix-store "/nix/store/jnhsnfz13w8ailk2lfs2pvamwa35mxzs-emacs-packages-deps/" 11)
+             (nix-store "/nix/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/" 11)
+             (nix-store "/another/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/" 15))
            do (should (project-nix-store-p nix-store-project)))
   (cl-loop for non-nix-store-project in
            '((vc Git "~/code/fork/nixpkgs/")
@@ -143,18 +152,20 @@ SYMBOL can be unbound, i.e., its value is void."
         (should-not (memq #'project-nix-store-try project-find-functions))
         (should-not (memq #'project-nix-store-p project-list-exclude))))))
 
-(ert-deftest project-nix-store-dir-change-clear-cache ()
-  "Test that cache is cleared after `project-nix-store-dir' is changed."
-  (project-nix-store-tests-save-value 'project-nix-store-dir
-    (let ((project-nix-store-dir "/nix/store/")
+(ert-deftest project-nix-store-dirs-change-clear-cache ()
+  "Test that cache is cleared after `project-nix-store-dirs' is changed."
+  (project-nix-store-tests-save-value 'project-nix-store-dirs
+    (let ((project-nix-store-dirs '("/another/store/" "/nix/store/"))
           (project-nix-store--cached-projects (make-hash-table :test 'equal))
           (project-nix-store--cached-project-names (make-hash-table :test 'equal)))
-      (project-name
-       (project-nix-store-try "/nix/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/"))
+      (should
+       (project-name
+        (should
+         (project-nix-store-try "/nix/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/"))))
       (ert-info ("cache is created")
         (should-not (hash-table-empty-p project-nix-store--cached-projects))
         (should-not (hash-table-empty-p project-nix-store--cached-project-names)))
-      (setopt project-nix-store-dir "/tmp/store/")
+      (setopt project-nix-store-dirs '("/tmp/store/"))
       (ert-info ("cache is cleared")
         (should (hash-table-empty-p project-nix-store--cached-projects))
         (should (hash-table-empty-p project-nix-store--cached-project-names))))))
@@ -163,24 +174,25 @@ SYMBOL can be unbound, i.e., its value is void."
   "Test cache is cleared after `project-nix-store-name-prefix' is changed."
   (project-nix-store-tests-save-value 'project-nix-store-name-prefix
     (let ((project-nix-store--cached-project-names (make-hash-table :test 'equal)))
-      (project-name
-       '(nix-store . "/nix/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/"))
+      (should
+       (project-name
+        '(nix-store "/nix/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/" 11)))
       (ert-info ("cache is created")
         (should-not (hash-table-empty-p project-nix-store--cached-project-names)))
       (setopt project-nix-store-name-prefix "<store>")
       (ert-info ("cache is cleared")
         (should (hash-table-empty-p project-nix-store--cached-project-names))))))
 
-(ert-deftest project-nix-store-dir-change-value ()
-  "Test that `project-nix-store-dir' can be changed by `setopt'."
-  (project-nix-store-tests-save-value 'project-nix-store-dir
-    (let ((new-value "/project/store/tests/"))
+(ert-deftest project-nix-store-dirs-change-value ()
+  "Test that `project-nix-store-dirs' can be changed by `setopt'."
+  (project-nix-store-tests-save-value 'project-nix-store-dirs
+    (let ((new-value '("/project/store/tests-0/" "/project/store/tests-1/")))
       (ert-info ("before change")
-        (should-not (equal project-nix-store-dir
+        (should-not (equal project-nix-store-dirs
                            new-value)))
-      (setopt project-nix-store-dir new-value)
+      (setopt project-nix-store-dirs new-value)
       (ert-info ("after change")
-        (should (equal project-nix-store-dir
+        (should (equal project-nix-store-dirs
                        new-value))))))
 
 (ert-deftest project-nix-store-name-prefix-change-value ()
