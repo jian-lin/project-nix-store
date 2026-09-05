@@ -4,7 +4,6 @@
 {
   perSystem =
     {
-      lib,
       pkgs,
       self',
       ...
@@ -19,11 +18,7 @@
       checks.checkdoc = pkgs.writeShellApplication {
         name = "checkdoc";
         runtimeInputs = [
-          # checkdoc-batch is introduced in Emacs 31
-          (lib.throwIfNot (lib.versionOlder pkgs.emacs.version "31")
-            "checkdoc: replace pkgs.emacs31 with pkgs.emacs"
-            pkgs.emacs31
-          )
+          pkgs.emacs
         ];
         text = ''
           for file in "$@"; do
