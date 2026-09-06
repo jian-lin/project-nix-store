@@ -66,8 +66,7 @@
 
 (ert-deftest project-nix-store-name ()
   "Test `project-name' called with a project-nix-store instance."
-  (let ((project-nix-store-dir "/nix/store/")
-        (project-and-name-suffixes
+  (let ((project-and-name-suffixes
          '((nix-store . "/nix/store/jnhsnfz13w8ailk2lfs2pvamwa35mxzs-emacs-packages-deps/")
            "emacs-packages-deps"
            (nix-store . "/nix/store/xxywqayx584zfal9d3h0smk5k2slyk44-emacs-30.2/")
