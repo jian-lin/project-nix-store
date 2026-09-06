@@ -207,6 +207,18 @@ SYMBOL can be unbound, i.e., its value is void."
         (should (equal project-nix-store-name-prefix
                        new-value))))))
 
+(ert-deftest project-nix-store-dirs-are-directory-names ()
+  "Test `project-nix-store-dirs' set by `setopt' are dirs, not files."
+  (project-nix-store-tests-save-value 'project-nix-store-dirs
+    (dolist (new-value '(("/nix/store" "/another/store")
+                         ("/nix/store/" "/another/store")
+                         ("/nix/store" "/another/store/")
+                         ("/nix/store/" "/another/store/")))
+      (ert-info ((format "%S" new-value) :prefix "project-nix-store-dirs = ")
+        (setopt project-nix-store-dirs new-value)
+        (dolist (project-nix-store-dir project-nix-store-dirs)
+          (should (directory-name-p project-nix-store-dir)))))))
+
 (provide 'project-nix-store-tests)
 
 ;;; project-nix-store-tests.el ends here
