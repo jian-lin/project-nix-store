@@ -116,14 +116,14 @@ SYMBOL can be unbound, i.e., its value is void."
   (declare (indent 1) (debug t))
   (cl-with-gensyms (is-bound original-value)
     (cl-once-only (symbol)
-      `(let* ((,is-bound (boundp ',symbol))
+      `(let* ((,is-bound (boundp ,symbol))
               (,original-value (when ,is-bound
                                  (symbol-value ,symbol))))
          (unwind-protect
              (progn ,@body)
            (if ,is-bound
                (set ,symbol ,original-value)
-             (makunbound ',symbol)))))))
+             (makunbound ,symbol)))))))
 
 (ert-deftest project-nix-store-unload-function ()
   (project-nix-store-tests-save-value 'project-find-functions
