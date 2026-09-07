@@ -3,6 +3,9 @@
 
 #+title: project-nix-store - Project backend for Nix-like store
 
+#+html: <a href="https://elpa.nongnu.org/nongnu/project-nix-store.html"><img alt="NonGNU ELPA" src="https://elpa.nongnu.org/nongnu/project-nix-store.svg"/></a>
+#+html: <a href="https://elpa.nongnu.org/nongnu-devel/project-nix-store.html"><img alt="NonGNU-devel ELPA" src="https://elpa.nongnu.org/nongnu-devel/project-nix-store.svg"/></a>
+
 #+begin_comment
 After changing this file,
 make sure it renders well in all these places:
