@@ -39,7 +39,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   check-links:
     name: lint - links
-    uses: ./.github/workflows/check-links.yaml
+    uses: $/.github/workflows/check-links.yaml
   generate-build-matrix:
     name: build - plan
     runs-on: ubuntu-latest
