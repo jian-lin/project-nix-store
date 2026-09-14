@@ -120,21 +120,26 @@
 
 (defmacro project-nix-store-tests-save-value (symbol &rest body)
   "Record SYMBOL's value; evaluate BODY in `progn'; restore SYMBOL's value.
-SYMBOL should evaluate to a symbol.
-SYMBOL can be unbound, i.e., its value is void."
+SYMBOL should evaluate to a symbol,
+representing a special variable.
+The value cell of that symbol can be void."
   (declare (indent 1) (debug t))
   (cl-with-gensyms (is-bound original-value)
     (cl-once-only (symbol)
-      `(let* ((,is-bound (boundp ,symbol))
-              (,original-value (when ,is-bound
-                                 (symbol-value ,symbol))))
-         (unwind-protect
-             (progn ,@body)
-           (if ,is-bound
-               (set ,symbol ,original-value)
-             (makunbound ,symbol)))))))
+      `(progn
+         (cl-check-type ,symbol symbol)
+         (cl-assert (special-variable-p ,symbol) t)
+         (let* ((,is-bound (boundp ,symbol))
+                (,original-value (when ,is-bound
+                                   (symbol-value ,symbol))))
+           (unwind-protect
+               (progn ,@body)
+             (if ,is-bound
+                 (set ,symbol ,original-value)
+               (makunbound ,symbol))))))))
 
 (ert-deftest project-nix-store-unload-function ()
+  (require 'project)
   (project-nix-store-tests-save-value 'project-find-functions
     (project-nix-store-tests-save-value 'project-list-exclude
       (add-hook 'project-find-functions #'project-nix-store-try -20)
