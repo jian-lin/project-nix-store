@@ -135,7 +135,9 @@ The value cell of that symbol can be void."
            (unwind-protect
                (progn ,@body)
              (if ,is-bound
-                 (set ,symbol ,original-value)
+                 (if (custom-variable-p ,symbol)
+                     (setopt--set ,symbol ,original-value)
+                   (set ,symbol ,original-value))
                (makunbound ,symbol))))))))
 
 (ert-deftest project-nix-store-unload-function ()
