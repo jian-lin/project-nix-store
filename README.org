@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2026 Lin Jian <me@linj.tech>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-#+title: project-nix-store - Project backend for Nix-like store
+#+title: project-nix-store - Project backend for Nix store
 
 #+html: <a href="https://elpa.nongnu.org/nongnu/project-nix-store.html"><img alt="NonGNU ELPA" src="https://elpa.nongnu.org/nongnu/project-nix-store.svg"/></a>
 #+html: <a href="https://elpa.nongnu.org/nongnu-devel/project-nix-store.html"><img alt="NonGNU-devel ELPA" src="https://elpa.nongnu.org/nongnu-devel/project-nix-store.svg"/></a>
@@ -18,14 +18,11 @@ When improving rendering for one makes another worse,
 prioritize the rendering quality of items appearing earlier in the above list.
 #+end_comment
 
-This package is a =project.el= backend for Nix-like store.
+This package is a =project.el= backend for [[https://nix.dev/manual/nix/2.35/store/index.html][Nix store]].
 Each store path,
 if it is a directory,
 is a project root.
 See ~project-root~ for store path definition.
-
-At the time of writing,
-this package also supports Guix store.
 
 This package eases operations on store files
 with the help of project interfaces described in Info node =Projects=.
@@ -57,6 +54,19 @@ at the time of writing,
 This package aims for good performance.
 It includes benchmarks for performance-sensitive functions.
 Use those benchmarks when hacking this package.
+
+* Other Nix-Like Stores
+
+Besides Nix store,
+it is likely that this package also works for other Nix-like stores.
+For example,
+at the time of writing,
+this package also supports Guix store.
+
+The author only uses Nix store
+so he does not guarantee the support of other Nix-like stores.
+
+Contributions to support other Nix-like stores are welcome.
 
 * License
 

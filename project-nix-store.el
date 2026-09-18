@@ -1,4 +1,4 @@
-;;; project-nix-store.el --- Project backend for Nix-like store  -*- lexical-binding: t; -*-
+;;; project-nix-store.el --- Project backend for Nix store  -*- lexical-binding: t; -*-
 
 ;; SPDX-FileCopyrightText: 2026 Lin Jian <me@linj.tech>
 ;; SPDX-License-Identifier: GPL-3.0-or-later
@@ -18,7 +18,7 @@
 (eval-when-compile (require 'cl-lib))
 
 (defgroup project-nix-store ()
-  "Project backend for Nix-like store."
+  "Project backend for Nix store."
   :group 'project
   :prefix "project-nix-store-"
   :link '(url-link
