@@ -41,6 +41,32 @@ melpaBuild {
           (normal-top-level-add-subdirs-to-load-path))" \
       --load=${pname}-tests \
       --funcall=ert-run-tests-batch-and-exit
+
+    lintEachFile() {
+      find $out/share/emacs \
+        -type f -name '*.el' \
+        -not -name "*-pkg.el" -not -name "*-autoloads.el" -not -name ".dir-locals.el" \
+        -print0 \
+      | xargs --verbose -0 -I {} -n 1 -P "$NIX_BUILD_CORES" "$@"
+    }
+
+    lintEachFile \
+      emacs --batch \
+        --funcall=package-activate-all \
+        "{}" \
+        --eval='
+          (progn
+            ;; load indentation settings, if any, see (info "(emacs) Lisp Indent")
+            (eval-buffer)
+            (indent-region (point-min) (point-max))
+            (with-current-buffer
+                (diff-no-select buffer-file-name (current-buffer) nil t)
+              (goto-char (point-min))
+              (condition-case nil
+                  (search-forward "Diff finished (no differences)")
+                (search-failed
+                 (princ (buffer-string))
+                 (error "%s" "File indentation is wrong")))))'
   '';
 
   turnCompilationWarningToError = true;
